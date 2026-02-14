@@ -1,0 +1,26 @@
+# Cross-Modal Attention Framework for NO₂ Prediction
+# Core dependencies
+torch>=2.0.0
+numpy>=1.24.0
+pandas>=2.0.0
+xarray>=2023.1.0
+netCDF4>=1.6.0
+scipy>=1.10.0
+
+# Data processing
+scikit-learn>=1.2.0
+pyproj>=3.5.0
+
+# Visualization
+matplotlib>=3.7.0
+seaborn>=0.12.0
+
+# Configuration
+pyyaml>=6.0
+
+# Progress bars
+tqdm>=4.65.0
+
+# Optional: For real Sentinel-5P data access
+# sentinelsat>=1.1.0
+# hda>=0.1.0

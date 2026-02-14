@@ -1,0 +1,80 @@
+# Configuration for Cross-Modal Attention Framework
+
+# Data Configuration
+data:
+  grid_resolution: 0.1  # degrees
+  spatial_bounds:
+    lat_min: 35.0
+    lat_max: 55.0
+    lon_min: -15.0
+    lon_max: 25.0
+  temporal:
+    start_date: "2023-01-01"
+    end_date: "2023-12-31"
+  qa_threshold: 0.75
+
+# Feature Configuration
+features:
+  satellite:
+    in_channels: 1
+    embed_dim: 256
+  auxiliary:
+    feature_dim: 12  # wind_u, wind_v, wind_sin, wind_cos, wind_mag, blh, temp, humidity, pressure, day_sin, day_cos, hour
+    embed_dim: 256
+    num_layers: 4
+    num_heads: 8
+  land_use:
+    embedding_dim: 16
+    num_categories: 10
+
+# Model Configuration
+model:
+  satellite_encoder:
+    kernel_sizes: [3, 5, 7]
+    depths: [2, 2, 2]
+    dropout: 0.1
+  auxiliary_encoder:
+    dropout: 0.1
+  cross_attention:
+    num_heads: 8
+    dropout: 0.1
+  prediction_head:
+    hidden_dim: 128
+
+# Training Configuration
+training:
+  batch_size: 16
+  warmup_epochs: 10
+  finetune_epochs: 40
+  warmup_lr: 1e-3
+  finetune_lr: 1e-4
+  weight_decay: 1e-5
+  loss: "huber"  # huber or mae
+  huber_delta: 1.0
+  gradient_clip: 1.0
+
+# Evaluation Configuration
+evaluation:
+  metrics: ["rmse", "mae", "r2", "spatial_correlation"]
+  regions: ["urban", "rural", "industrial", "background"]
+  seasons: ["winter", "spring", "summer", "autumn"]
+
+# Robustness Testing
+robustness:
+  satellite_drop_prob: 0.3
+  aux_drop_channels: [0, 1, 2]  # wind components
+
+# Output Configuration
+output:
+  dir: "outputs"
+  save_checkpoints: true
+  checkpoint_freq: 10
+  save_attention_maps: true
+
+# Synthetic Data Configuration (for demonstration)
+synthetic:
+  num_samples: 1000
+  grid_height: 64
+  grid_width: 64
+  time_steps: 24
+  noise_level: 0.1

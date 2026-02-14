@@ -1,0 +1,330 @@
+{
+  "experiment_id": "20260208_155712",
+  "config": {
+    "data": {
+      "grid_resolution": 0.1,
+      "spatial_bounds": {
+        "lat_min": 35.0,
+        "lat_max": 55.0,
+        "lon_min": -15.0,
+        "lon_max": 25.0
+      },
+      "temporal": {
+        "start_date": "2023-01-01",
+        "end_date": "2023-12-31"
+      },
+      "qa_threshold": 0.75
+    },
+    "features": {
+      "satellite": {
+        "in_channels": 1,
+        "embed_dim": 256
+      },
+      "auxiliary": {
+        "feature_dim": 12,
+        "embed_dim": 256,
+        "num_layers": 4,
+        "num_heads": 8
+      },
+      "land_use": {
+        "embedding_dim": 16,
+        "num_categories": 10
+      }
+    },
+    "model": {
+      "satellite_encoder": {
+        "kernel_sizes": [
+          3,
+          5,
+          7
+        ],
+        "depths": [
+          2,
+          2,
+          2
+        ],
+        "dropout": 0.1
+      },
+      "auxiliary_encoder": {
+        "dropout": 0.1
+      },
+      "cross_attention": {
+        "num_heads": 8,
+        "dropout": 0.1
+      },
+      "prediction_head": {
+        "hidden_dim": 128
+      }
+    },
+    "training": {
+      "warmup_epochs": 2,
+      "finetune_epochs": 3,
+      "batch_size": 8
+    },
+    "evaluation": {
+      "metrics": [
+        "rmse",
+        "mae",
+        "r2",
+        "spatial_correlation"
+      ],
+      "regions": [
+        "urban",
+        "rural",
+        "industrial",
+        "background"
+      ],
+      "seasons": [
+        "winter",
+        "spring",
+        "summer",
+        "autumn"
+      ]
+    },
+    "robustness": {
+      "satellite_drop_prob": 0.3,
+      "aux_drop_channels": [
+        0,
+        1,
+        2
+      ]
+    },
+    "output": {
+      "dir": "outputs",
+      "save_checkpoints": true,
+      "checkpoint_freq": 10,
+      "save_attention_maps": true
+    },
+    "synthetic": {
+      "num_samples": 100,
+      "grid_height": 32,
+      "grid_width": 32,
+      "time_steps": 12
+    }
+  },
+  "evaluation": {
+    "global": {
+      "rmse": 1.6852264404296875,
+      "mae": 0.9591453671455383,
+      "r2": 0.6836894154548645,
+      "bias": -0.4598536193370819,
+      "spatial_correlation": 0.9035739350105682,
+      "n_samples": 15360
+    },
+    "regional": {
+      "rural": {
+        "rmse": 0.578998863697052,
+        "mae": 0.46325787901878357,
+        "r2": -0.001163482666015625,
+        "bias": -0.006617505103349686,
+        "spatial_correlation": 0.9035739350105682,
+        "n_samples": 5685
+      },
+      "suburban": {
+        "rmse": 1.5315228700637817,
+        "mae": 0.871411144733429,
+        "r2": 0.6793062686920166,
+        "bias": -0.3666035830974579,
+        "spatial_correlation": 0.9035739350105682,
+        "n_samples": 7545
+      },
+      "urban": {
+        "rmse": 3.3580613136291504,
+        "mae": 2.5934534072875977,
+        "r2": 0.1502125859260559,
+        "bias": -1.9998626708984375,
+        "spatial_correlation": 0.9035739350105682,
+        "n_samples": 2130
+      }
+    },
+    "by_pollution_level": {
+      "low": {
+        "rmse": 0.62125164270401,
+        "mae": 0.49880632758140564,
+        "r2": -2.207458734512329,
+        "bias": 0.49861183762550354,
+        "spatial_correlation": 0.9035739350105682,
+        "n_samples": 5069
+      },
+      "medium": {
+        "rmse": 0.47935768961906433,
+        "mae": 0.36583462357521057,
+        "r2": -3.346652030944824,
+        "bias": -0.21447479724884033,
+        "spatial_correlation": 0.9035739350105682,
+        "n_samples": 5222
+      },
+      "high": {
+        "rmse": 2.8254222869873047,
+        "mae": 2.030703544616699,
+        "r2": 0.3836771249771118,
+        "bias": -1.6711041927337646,
+        "spatial_correlation": 0.9035739350105682,
+        "n_samples": 5069
+      }
+    }
+  },
+  "ablation": {
+    "attention_analysis": {
+      "average_entropy": 2.4455924034118652,
+      "max_entropy": 2.4849066497880004,
+      "entropy_ratio": 0.9841787833842816,
+      "average_max_attention": 0.10937728732824326,
+      "is_collapsed": true,
+      "interpretation": "Attention is effectively uniform (BAD)"
+    }
+  },
+  "robustness": {
+    "satellite_dropout": {
+      "baseline": {
+        "rmse": 1.6635462045669556,
+        "mae": 0.943989634513855,
+        "r2": 0.6853193044662476,
+        "bias": -0.44100552797317505,
+        "spatial_correlation": 0.900552772972465,
+        "n_samples": 8192
+      },
+      "drop_10pct": {
+        "rmse": 1.6637747287750244,
+        "mae": 0.9460889101028442,
+        "r2": 0.6852327585220337,
+        "bias": -0.4767725467681885,
+        "spatial_correlation": 0.9097891746016413,
+        "n_samples": 8192,
+        "rmse_degradation": 0.013737172279393306
+      },
+      "drop_20pct": {
+        "rmse": 1.6725964546203613,
+        "mae": 0.9579213261604309,
+        "r2": 0.6818859577178955,
+        "bias": -0.5108106136322021,
+        "spatial_correlation": 0.9155861961207697,
+        "n_samples": 8192,
+        "rmse_degradation": 0.5440335849139721
+      },
+      "drop_30pct": {
+        "rmse": 1.695386290550232,
+        "mae": 0.9767799377441406,
+        "r2": 0.6731580495834351,
+        "bias": -0.5589827299118042,
+        "spatial_correlation": 0.9215391854729629,
+        "n_samples": 8192,
+        "rmse_degradation": 1.9139886764711012
+      },
+      "drop_50pct": {
+        "rmse": 1.8287599086761475,
+        "mae": 1.0620063543319702,
+        "r2": 0.6197109818458557,
+        "bias": -0.696645975112915,
+        "spatial_correlation": 0.9237327618243973,
+        "n_samples": 8192,
+        "rmse_degradation": 9.931416612032095
+      }
+    },
+    "noise_injection": {
+      "baseline": {
+        "rmse": 1.6635462045669556,
+        "mae": 0.943989634513855,
+        "r2": 0.6853193044662476,
+        "bias": -0.44100552797317505,
+        "spatial_correlation": 0.900552772972465,
+        "n_samples": 8192
+      },
+      "noise_5pct": {
+        "rmse": 1.66360342502594,
+        "mae": 0.9440493583679199,
+        "r2": 0.6852976083755493,
+        "bias": -0.44054216146469116,
+        "spatial_correlation": 0.9004494580628833,
+        "n_samples": 8192,
+        "rmse_degradation": 0.0034396675504089202
+      },
+      "noise_10pct": {
+        "rmse": 1.6643497943878174,
+        "mae": 0.9446742534637451,
+        "r2": 0.6850152015686035,
+        "bias": -0.43978697061538696,
+        "spatial_correlation": 0.9001848035542456,
+        "n_samples": 8192,
+        "rmse_degradation": 0.048305831160910806
+      },
+      "noise_20pct": {
+        "rmse": 1.6642950773239136,
+        "mae": 0.9460797905921936,
+        "r2": 0.6850358843803406,
+        "bias": -0.4334542751312256,
+        "spatial_correlation": 0.8991261582305511,
+        "n_samples": 8192,
+        "rmse_degradation": 0.04501664906584324
+      }
+    },
+    "auxiliary_dropout": {
+      "baseline": {
+        "rmse": 1.6635462045669556,
+        "mae": 0.943989634513855,
+        "r2": 0.6853193044662476,
+        "bias": -0.44100552797317505,
+        "spatial_correlation": 0.900552772972465,
+        "n_samples": 8192
+      },
+      "drop_wind_u_norm": {
+        "rmse": 1.6635018587112427,
+        "mae": 0.94395512342453,
+        "r2": 0.6853359937667847,
+        "bias": -0.4407128095626831,
+        "spatial_correlation": 0.9005804504295186,
+        "n_samples": 8192,
+        "dropped_channels": [
+          "wind_u_norm"
+        ],
+        "rmse_degradation": -0.0026657423515596967
+      },
+      "drop_wind_v_norm": {
+        "rmse": 1.663529872894287,
+        "mae": 0.9439740180969238,
+        "r2": 0.6853254437446594,
+        "bias": -0.44088590145111084,
+        "spatial_correlation": 0.9005699097162048,
+        "n_samples": 8192,
+        "dropped_channels": [
+          "wind_v_norm"
+        ],
+        "rmse_degradation": -0.0009817384466814794
+      },
+      "drop_wind_u_norm_wind_v_norm": {
+        "rmse": 1.6634854078292847,
+        "mae": 0.9439393877983093,
+        "r2": 0.6853422522544861,
+        "bias": -0.440589964389801,
+        "spatial_correlation": 0.9005976558562674,
+        "n_samples": 8192,
+        "dropped_channels": [
+          "wind_u_norm",
+          "wind_v_norm"
+        ],
+        "rmse_degradation": -0.0036546467722997633
+      },
+      "drop_wind_u_norm_wind_v_norm_wind_sin_wind_cos_wind_mag": {
+        "rmse": 1.6611557006835938,
+        "mae": 0.9416400790214539,
+        "r2": 0.686223030090332,
+        "bias": -0.4369674026966095,
+        "spatial_correlation": 0.9038736571341299,
+        "n_samples": 8192,
+        "dropped_channels": [
+          "wind_u_norm",
+          "wind_v_norm",
+          "wind_sin",
+          "wind_cos",
+          "wind_mag"
+        ],
+        "rmse_degradation": -0.14369927789196213
+      }
+    }
+  },
+  "training_history": {
+    "final_train_loss": 0.6403061416414049,
+    "final_val_loss": 0.5851153135299683,
+    "total_epochs": 5
+  }
+}
