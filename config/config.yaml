@@ -46,9 +46,9 @@ training:
   batch_size: 16
   warmup_epochs: 10
   finetune_epochs: 40
-  warmup_lr: 1e-3
-  finetune_lr: 1e-4
-  weight_decay: 1e-5
+  warmup_lr: 0.001       # or 1.0e-3
+  finetune_lr: 0.0001    # or 1.0e-4
+  weight_decay: 0.00001  # or 1.0e-5
   loss: "huber"  # huber or mae
   huber_delta: 1.0
   gradient_clip: 1.0
